@@ -32,7 +32,7 @@ bool allowedtowind()
 	return 1;
 }
 
-void wind()
+void windhandler()
 {
 	lastwind = clock_getunixtime();
   if(!allowedtowind()) return;
@@ -136,12 +136,12 @@ void loop()
 	calculate();
   if (enter.getSingleDebouncedPress()) enterpress();
   if (select.getSingleDebouncedPress()) selectpress();
-	if (clock_getunixtime() >= nextwind) wind();
-  if (millis() > lastmenu_draw + MENUTIMEOUT) {
+	if (clock_getunixtime() >= nextwind) windhandler();
+  if ((millis() - lastmenu_draw) > MENUTIMEOUT) {
     configmode = 0;
     draw_confmenu();
   }
-  if (millis() > lastrefresh + REDRAWINTERVAL) {
+  if ((millis() - lastrefresh) > REDRAWINTERVAL) {
     draw_screen();
   }
 }
