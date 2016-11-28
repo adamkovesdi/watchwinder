@@ -1,5 +1,6 @@
 // Watch winder (c) 2016 by Adam Kovesdi - all rights reserved
 #include <Arduino.h>
+#include <EEPROM.h>
 #include <Pushbutton.h>
 #include "config.h"
 #include "display.h"
@@ -47,7 +48,12 @@ void windhandler()
 void saveconfig()
 {
   char buf[21];
-  // TODO: save config to eeprom (and load in setup)
+	EEPROM.update(0,0xab);
+	EEPROM.update(1,config_tpd);
+	EEPROM.update(2,config_windintervalminutes);
+	EEPROM.update(3,config_winddirection);
+	EEPROM.update(4,config_starthour);
+	EEPROM.update(5,config_endhour);
   sprintf(buf, "....config saved....");
   configmode = 0;
   display_banner(buf);
@@ -114,6 +120,12 @@ void setup()
   clock_init();
   lastwind = clock_getunixtime();
   // TODO: read config from eeprom
+	if(EEPROM.read(0)!=0xab) return;	// no previous config
+	config_tpd=EEPROM.read(1);
+	config_windintervalminutes=EEPROM.read(2);
+	config_winddirection=EEPROM.read(3);
+	config_starthour=EEPROM.read(4);
+	config_endhour=EEPROM.read(5);
 }
 
 void draw_screen()

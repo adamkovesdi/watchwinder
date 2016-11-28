@@ -12,9 +12,9 @@ extern const uint16_t	values_tpd[];
 extern const uint16_t	values_winddirection[];
 extern const uint16_t	values_windintervalminutes[];
 
-extern uint16_t config_winddirection;
-extern uint16_t config_tpd;
-extern uint16_t config_windintervalminutes;
+extern uint8_t config_winddirection;
+extern uint8_t config_tpd;
+extern uint8_t config_windintervalminutes;
 extern uint8_t config_starthour;
 extern uint8_t config_endhour;
 
@@ -30,8 +30,8 @@ extern uint8_t config_endhour;
 
 // function definitions 
 /**************************************************/
-extern void value_inc(uint16_t *index, const uint16_t *array);
-extern void value_dec(uint16_t *index, const uint16_t *array);
+extern void value_inc(uint8_t *index, const uint16_t *array);
+extern void value_dec(uint8_t *index, const uint16_t *array);
 extern void starthour_inc();
 extern void starthour_dec();
 extern void endhour_inc();
