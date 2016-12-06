@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <Pushbutton.h>
+#include <Stepper.h>
 #include "config.h"
 #include "display.h"
 #include "clock.h"
@@ -9,8 +10,14 @@
 #define MENUTIMEOUT			10000
 #define REDRAWINTERVAL	100
 
+// configure buttons
 Pushbutton enter(8);
 Pushbutton select(9);
+
+// configure according to motor
+#define MOTORSTEPS		50
+#define MOTORSPEED		40
+Stepper windmotor(MOTORSTEPS, 10, 11, 6, 5);
 
 unsigned long lastwind = 0;
 unsigned long	nextwind = 0;
@@ -37,12 +44,18 @@ void windhandler()
 {
 	lastwind = clock_getunixtime();
   if(!allowedtowind()) return;
-  // TODO: watch winding algorithm 
 	char buf[21];
   sprintf(buf, "....winding time....");
-	windstoday+=turnsperwind;
   display_banner(buf);
-  delay(1000);
+  delay(500);
+  // TODO: proper watch winding algorithm
+	int i;
+	for(i=0;i<turnsperwind;i++)
+	{
+		windmotor.step(MOTORSTEPS);
+		windstoday++;
+		if(!allowedtowind()) return;
+	}
 }
 
 void saveconfig()
@@ -126,6 +139,7 @@ void setup()
 	config_winddirection=EEPROM.read(3);
 	config_starthour=EEPROM.read(4);
 	config_endhour=EEPROM.read(5);
+	windmotor.setSpeed(MOTORSPEED);
 }
 
 void draw_screen()
@@ -149,15 +163,13 @@ void loop()
   if (enter.getSingleDebouncedPress()) enterpress();
   if (select.getSingleDebouncedPress()) selectpress();
 	if (clock_getunixtime() >= nextwind) windhandler();
-  if ((millis() - lastmenu_draw) > MENUTIMEOUT) {
+  if ((millis() - lastmenu_draw) >= MENUTIMEOUT) {
     configmode = 0;
     draw_confmenu();
   }
-  if ((millis() - lastrefresh) > REDRAWINTERVAL) {
+  if ((millis() - lastrefresh) >= REDRAWINTERVAL) {
     draw_screen();
   }
+	// if (clock_getunixtime() %10==0) wind();		// this is a test
 }
-
-
-
 
