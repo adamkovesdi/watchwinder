@@ -12,7 +12,7 @@ This project is work in progress, core functionality is there but needs some mor
 - Wind counter
 - Next wind scheduling
 
-## What's not so good yet
+## What's not that good yet
 - Wind direction support
 - Proper winding pattern
 - Wrap up the whole stuff into something organized
